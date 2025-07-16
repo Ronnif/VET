@@ -1,0 +1,31 @@
+# Entorno virtual
+.venv/
+venv/
+
+# Caché de Python
+__pycache__/
+*.pyc
+
+# Configuración específica de instancia
+instance/
+
+# Migraciones: caché y archivos temporales
+migrations/__pycache__/
+migrations/*.pyc
+
+# Archivos de base de datos locales
+*.db
+
+# Variables de entorno
+.env
+
+# Archivos temporales del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de logs
+*.log
+
+# Archivos de pruebas temporales
+*.tmp
+*.bak
