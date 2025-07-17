@@ -26,7 +26,9 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../axios'
 import fondoLogin from '../assets/fondo6.png'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const username = ref('')
 const password = ref('')
 const error = ref('')
@@ -43,16 +45,15 @@ const login = async () => {
     localStorage.setItem('token', response.data.data.token)
     localStorage.setItem('expiresAt', expiresAt)
     localStorage.setItem('role', response.data.data.user.role)
-    localStorage.setItem('user_id', response.data.data.user.id) // <-- NUEVO
-    localStorage.setItem('user_name', response.data.data.user.username) // <-- NUEVO
-    // Si es admin, redirige al selector de rol
+    localStorage.setItem('user_id', response.data.data.user.id)
+    localStorage.setItem('user_name', response.data.data.user.username)
     if (response.data.data.user.role === 'admin') {
       router.push('/role-selector')
     } else {
       router.push('/dashboard')
     }
   } catch (err) {
-    error.value = err.response?.data?.message || 'Usuario o contraseña incorrectos'
+    toast.error(err.response?.data?.message || 'Usuario o contraseña incorrectos') // Mensaje moderno
   }
 }
 </script>
@@ -94,9 +95,9 @@ const login = async () => {
   border-radius: 18px;
   box-shadow: 0 8px 32px 0 rgba(60, 60, 60, 0.25);
   padding: 2.5rem 2.5rem 2rem 2.5rem;
-  min-width: 340px;
-  max-width: 95vw;
-  width: 350px;
+  min-width: 400px;
+  max-width: 98vw;
+  width: 420px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -105,7 +106,7 @@ const login = async () => {
   border: 1.5px solid rgba(255,255,255,0.18);
 }
 .login-logo {
-  font-size: 2.2rem;
+  font-size: 2.8rem;
   font-weight: 700;
   margin-bottom: 2rem;
   letter-spacing: 1px;
@@ -131,7 +132,7 @@ input {
   width: 100%;
   margin: 0.3rem 0 1.1rem 0;
   padding: 0.8rem 1rem;
-  font-size: 1.08rem;
+  font-size: 1.18rem;
   border-radius: 8px;
   border: 1.5px solid #bdbdbd;
   background: #f8f8f8;
@@ -152,7 +153,7 @@ input:focus {
 button {
   width: 100%;
   padding: 0.9rem 0;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   background: linear-gradient(90deg, #050c4d 60%, #330650 100%);
   color: #fff;
   border: none;

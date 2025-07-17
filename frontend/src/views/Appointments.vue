@@ -95,7 +95,9 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import api from '../axios'
 import jsPDF from 'jspdf'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const appointments = ref([])
 const showForm = ref(false)
 const nuevaCita = ref({
@@ -184,8 +186,9 @@ async function agendarCita() {
       pickup_code: ''
     }
     showForm.value = false
+    toast.success('Cita agendada correctamente') // Mensaje verde moderno
   } catch (error) {
-    alert('Error al agendar cita: ' + (error.response?.data?.msg || error.message))
+    toast.error('Error al agendar cita: ' + (error.response?.data?.msg || error.message))
   }
 }
 
@@ -219,13 +222,13 @@ async function verificarCodigo(cita) {
     try {
       await api.put(`/appointments/${cita.id}`, { collected: true })
       cita.collected = true
-      alert('Código correcto. Mascota marcada como recogida.')
+      toast.success('Código correcto. Mascota marcada como recogida.') // Mensaje verde moderno
       codigoIngresado.value[cita.id] = ''
     } catch (error) {
-      alert('Error al actualizar el estado de recogida.')
+      toast.error('Error al actualizar el estado de recogida.')
     }
   } else {
-    alert('Código incorrecto. Verifique con el dueño.')
+    toast.error('Código incorrecto. Verifique con el dueño.')
   }
 }
 
@@ -302,7 +305,7 @@ button:hover:not(:disabled) {
 }
 
 .table-scroll {
-  max-height: 340px;
+  max-height: 500px;
   overflow-y: auto;
   margin-top: 2rem;
   border-radius: 10px;

@@ -4,7 +4,6 @@ node_modules/
 # Build output
 dist/
 dist-ssr/
-*.local
 
 # Archivos de entorno
 .env
@@ -31,3 +30,4 @@ lerna-debug.log*
 
 # Archivos temporales del sistema operativo
 .DS_Store
+Thumbs.db

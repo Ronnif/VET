@@ -93,6 +93,7 @@
         </li>
       </ul>
     </aside>
+    <!-- Solo el contenido principal, no sidebar -->
     <div class="main-section">
       <header class="dashboard-header">
         <div class="header-left">
@@ -108,25 +109,29 @@
       </header>
       <div :class="['dashboard-content', { 'collapsed-content': isCollapsed }]">
         <template v-if="route.path === '/dashboard'">
-          <h1>
+          <h1 class="font-bold text-3xl mb-6">
             <span v-if="role === 'admin'">Panel de Administrador</span>
             <span v-else-if="role === 'veterinario'">Panel de Veterinario</span>
             <span v-else-if="role === 'recepcionista'">Panel de Recepcionista</span>
           </h1>
-          <div class="dashboard-grid">
+
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-4">
             <div
-  v-for="card in filteredCards"
-  :key="card.label"
-  class="dashboard-card"
-  :style="{
-    '--card-bg': card.bg,
-    '--card-bg-hover': card.bgHover || card.bg
-  }"
-  @click="goTo(card.route)"
->
-  <div class="dashboard-card-icon">{{ card.icon }}</div>
-  <div class="dashboard-card-label">{{ card.label }}</div>
-</div>
+              v-for="card in filteredCards"
+              :key="card.label"
+              class="col"
+            >
+              <div
+                :class="['card', card.bg, 'text-white', 'shadow', 'mb-4', 'dashboard-card']"
+                style="cursor:pointer; transition:transform 0.18s, box-shadow 0.18s;"
+                @click="goTo(card.route)"
+              >
+                <div class="card-body d-flex flex-column align-items-center justify-content-center py-4">
+                  <i :class="[card.icon, 'fs-1 mb-3']"></i>
+                  <span class="fw-bold fs-4">{{ card.label }}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </template>
         <router-view v-else />
@@ -158,14 +163,14 @@ watch(
 
 // Tarjetas disponibles (puedes agregar/quitar según tu app)
 const cards = [
-  { label: 'Gestión de Usuarios',icon: '👤',bg: 'linear-gradient(135deg, #4caf50 0%, #8bc34a 100%)',bgHover: 'linear-gradient(135deg, #8bc34a 0%, #4caf50 100%)',route: 'users',roles: ['admin']},
-  { label: 'Gestión de Servicios',icon: '🛠️',bg: 'linear-gradient(135deg, #03a9f4 0%, #00bcd4 100%)',bgHover: 'linear-gradient(135deg, #00bcd4 0%, #03a9f4 100%)',route: 'services',roles: ['admin']},
-  { label: 'Reportes',icon: '📊',bg: 'linear-gradient(135deg, #ff9800 0%, #ffc107 100%)',bgHover: 'linear-gradient(135deg, #ffc107 0%, #ff9800 100%)',route: 'reports',roles: ['admin']},
-  { label: 'Pagos', icon: '💵', bg: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', bgHover: 'linear-gradient(135deg, #38f9d7 0%, #43e97b 100%)', route: 'payments', roles: ['recepcionista'] },
-  { label: 'Historial Clínico', icon: '📋', bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', bgHover: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)', route: 'clinical-history', roles: ['recepcionista', 'veterinario'] },
-  { label: 'Gestión de Clientes', icon: '👥', bg: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)', bgHover: 'linear-gradient(135deg, #185a9d 0%, #43cea2 100%)', route: 'clients', roles: ['recepcionista'] },
-  { label: 'Gestión de Citas', icon: '📅', bg: 'linear-gradient(135deg, #36d1c4 0%, #5b86e5 100%)', bgHover: 'linear-gradient(135deg, #5b86e5 0%, #36d1c4 100%)', route: 'appointments', roles: ['recepcionista'] },
-  { label: 'Mis Citas',icon: '📆',bg: 'linear-gradient(135deg, #e040fb 0%, #ff80ab 100%)',bgHover: 'linear-gradient(135deg, #ff80ab 0%, #e040fb 100%)',route: 'my-quotes',roles: ['veterinario']}
+  { label: 'Gestión de Usuarios', icon: 'bi-person-badge', bg: 'bg-primary', route: 'users', roles: ['admin'] },
+  { label: 'Gestión de Servicios', icon: 'bi-tools', bg: 'bg-warning', route: 'services', roles: ['admin'] },
+  { label: 'Reportes', icon: 'bi-bar-chart-line', bg: 'bg-danger', route: 'reports', roles: ['admin'] },
+  { label: 'Pagos', icon: 'bi-credit-card-2-front', bg: 'bg-info', route: 'payments', roles: ['recepcionista'] },
+  { label: 'Historial Clínico', icon: 'bi-journal-medical', bg: 'bg-success', route: 'clinical-history', roles: ['recepcionista', 'veterinario'] },
+  { label: 'Gestión de Clientes', icon: 'bi-people', bg: 'bg-secondary', route: 'clients', roles: ['recepcionista'] },
+  { label: 'Gestión de Citas', icon: 'bi-calendar-event', bg: 'bg-dark', route: 'appointments', roles: ['recepcionista'] },
+  { label: 'Mis Citas', icon: 'bi-calendar-check', bg: 'bg-primary', route: 'my-quotes', roles: ['veterinario'] }
 ]
 
 // Solo muestra las tarjetas permitidas para el rol
@@ -208,12 +213,11 @@ const roleLabel = computed(() => {
   background: #f6f8fc;
 }
 .sidebar {
-  width: 200px; /* o el ancho que uses cuando está abierto */
+  width: 200px;
   min-width: 60px;
   max-width: 100vw;
   height: 100vh;
-  background: #afacac;
-  border-radius: 0;
+  background: #ffffff;
   box-shadow: 0 4px 32px 0 rgba(44, 62, 80, 0.10);
   display: flex;
   flex-direction: column;
@@ -329,7 +333,6 @@ const roleLabel = computed(() => {
   top: 0;
   z-index: 100;
   box-shadow: 0 2px 16px 0 rgba(44, 62, 80, 0.10);
-  border-bottom-left-radius: 0; /* Opcional: sin radios para que quede pegado */
 }
 .header-left .clinic-name {
   font-size: 2rem;
@@ -372,66 +375,35 @@ const roleLabel = computed(() => {
 /* Ajuste para el contenido principal */
 .main-section {
   flex: 1;
-  display: flex;
-  flex-direction: column;
   min-width: 0;
+  /* Elimina display: flex y flex-direction aquí */
 }
 .dashboard-content {
   flex: 1;
-  display: flex;
-  flex-direction: column;
   min-height: 0;
   background: #f6f8fc;
-  padding: 22px 0 0 28px; /* Normal: sidebar abierto */
+  padding: 22px 0 0 28px;
   transition: padding-left 0.3s cubic-bezier(.4,2,.6,1);
+  /* Elimina display: flex y flex-direction aquí */
 }
 .collapsed-content {
-  padding-left: 64px !important; /* Igual al ancho del sidebar colapsado */
+  padding-left: 64px !important;
   transition: padding-left 0.3s cubic-bezier(.4,2,.6,1);
 }
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 22px;
-  margin-top: 32px;
-}
 .dashboard-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 160px;
-  border-radius: 22px;
-  color: #222;
-  font-weight: 700;
-  font-size: 1.18rem;
-  background: var(--card-bg, linear-gradient(135deg, #e3eafc 80%, #f5f7fa 100%));
-  box-shadow: 0 6px 24px 0 rgba(30, 64, 175, 0.10);
-  cursor: pointer;
-  transition: transform 0.16s, box-shadow 0.16s, background 0.18s;
-  user-select: none;
-  text-align: center;
-  border: 2px solid #e0e7ff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px 0 rgba(44, 62, 80, 0.13);
+  transition: transform 0.18s, box-shadow 0.18s;
 }
-
 .dashboard-card:hover {
-  transform: translateY(-6px) scale(1.04);
-  box-shadow: 0 12px 32px 0 rgba(30, 64, 175, 0.18);
-  border-color: #2563eb;
-  background: var(--card-bg-hover, linear-gradient(135deg, #dbeafe 80%, #e0e7ff 100%));
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 8px 32px 0 rgba(44, 62, 80, 0.18);
+  filter: brightness(1.08);
 }
-
-.dashboard-card-icon {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  color: #2563eb;
-  filter: drop-shadow(0 2px 8px rgba(30,64,175,0.10));
+.dashboard-card .card-body i {
+  transition: transform 0.18s;
 }
-
-.dashboard-card-label {
-  font-size: 1.13rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  color: #222b45;
+.dashboard-card:hover .card-body i {
+  transform: scale(1.18) rotate(-8deg);
 }
 </style>

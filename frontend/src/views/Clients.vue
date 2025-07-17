@@ -59,7 +59,9 @@
 import { ref, onMounted } from 'vue'
 import api from '../axios'
 import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const router = useRouter()
 const showForm = ref(false)
 const clientes = ref([])
@@ -93,11 +95,12 @@ async function agregarCliente() {
     const res = await api.post('/clients', { ...nuevoCliente.value }, {
       headers: { Authorization: `Bearer ${token}` }
     })
-    clientes.value.unshift(res.data.data) // Agrega el nuevo cliente al inicio
+    clientes.value.unshift(res.data.data)
     nuevoCliente.value = { name: '', email: '', phone: '', address: '' }
     showForm.value = false
+    toast.success('Cliente agregado correctamente') // Mensaje verde de éxito
   } catch (error) {
-    alert('Error al agregar cliente: ' + (error.response?.data?.msg || error.message))
+    toast.error('Error al agregar cliente: ' + (error.response?.data?.msg || error.message)) // Mensaje rojo de error
   }
 }
 

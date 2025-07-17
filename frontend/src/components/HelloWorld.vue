@@ -52,3 +52,7 @@ const alertClass = computed(() => {
   color: #c62828;
 }
 </style>
+
+<script>
+export const hello = 'world';
+</script>

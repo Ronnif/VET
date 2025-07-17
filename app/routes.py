@@ -94,7 +94,9 @@ def api_create_appointment():
         vet_id=data['vet_id'],
         service_id=data['service_id'],
         date=data['date'],
-        time=data['time']
+        time=data['time'],
+        pickup_code=data.get('pickup_code'),
+        drop_off=data.get('drop_off', False)  # <-- Agrega esto
     )
     db.session.add(appointment)
     db.session.commit()

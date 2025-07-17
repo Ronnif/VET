@@ -64,14 +64,21 @@
       <div class="modal">
         <h3>Agregar nueva observación</h3>
         <label>Mascota:</label>
-        <multiselect
-          v-model="modalObs.pet_id"
-          :options="mascotasAtendidas"
-          :custom-label="pet => pet.name"
-          placeholder="Seleccione una mascota"
-          label="name"
-          track-by="id"
-        />
+        <template v-if="modalObs.id">
+          <!-- Modo edición: solo muestra el nombre, no permite cambiar -->
+          <input type="text" :value="nombreMascota(modalObs.pet_id)" disabled />
+        </template>
+        <template v-else>
+          <!-- Modo agregar: permite seleccionar mascota -->
+          <multiselect
+            v-model="modalObs.pet_id"
+            :options="mascotasAtendidas"
+            :custom-label="pet => pet.name"
+            placeholder="Seleccione una mascota"
+            label="name"
+            track-by="id"
+          />
+        </template>
         <span v-if="mascotasAtendidas.length === 0" style="color: #c00; font-size: 0.95rem;">
           No hay mascotas atendidas por usted.
         </span>
@@ -80,6 +87,7 @@
         <button @click="cerrarModalObs">Cancelar</button>
       </div>
     </div>
+    <div style="height: 4rem;"></div>
   </div>
 </template>
 
@@ -89,7 +97,9 @@ import api from '../axios'
 import jsPDF from 'jspdf'
 import Multiselect from 'vue-multiselect'
 import 'vue-multiselect/dist/vue-multiselect.min.css'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const historial = ref([])
 const pets = ref([])
 const filtroPetId = ref('')
@@ -182,17 +192,19 @@ async function guardarObsCard() {
       await api.put(`/clinical-history/${modalObs.value.id}`, {
         observation: modalObs.value.observation
       })
+      toast.success('Observación editada correctamente')
     } else {
       // Nueva observación
       await api.post('/clinical-history', {
         pet_id: typeof modalObs.value.pet_id === 'object' ? modalObs.value.pet_id.id : modalObs.value.pet_id,
         observation: modalObs.value.observation
       })
+      toast.success('Observación agregada correctamente')
     }
     await fetchHistorial()
     cerrarModalObs()
   } catch (error) {
-    alert('Error al guardar observación: ' + (error.response?.data?.msg || error.message))
+    toast.error('Error al guardar observación: ' + (error.response?.data?.msg || error.message))
   }
 }
 
@@ -220,16 +232,19 @@ const mascotasAtendidas = computed(() =>
   padding: 0;
 }
 .historial-list {
-  height: calc(100vh - 180px); /* Ajusta este valor según tu layout */
+  height: calc(100vh - 120px); /* Ajusta este valor según tu layout */
   overflow-y: auto;
   margin-top: 2rem;
   border-radius: 10px;
   box-shadow: 0 1px 8px 0 rgba(33,150,243,0.04);
   background: #fff;
-  padding: 1rem 1rem 2.5rem 1rem; /* Más padding inferior */
+  padding: 1rem 1rem 10rem 1rem; /* Más padding inferior */
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+}
+.historial-list > .historial-card:last-child {
+  margin-bottom: 20rem;
 }
 @media (max-width: 900px) {
   .historial-container {

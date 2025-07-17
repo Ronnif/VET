@@ -50,7 +50,9 @@
 import { ref, onMounted, watch } from 'vue'
 import api from '../axios'
 import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const router = useRouter()
 
 const props = defineProps({
@@ -90,18 +92,17 @@ onMounted(() => {
 
 async function agregarMascota() {
   if (!nuevaMascota.value.client_id) {
-    alert('Selecciona un cliente válido');
+    toast.error('Selecciona un cliente válido');
     return;
   }
   try {
     const res = await api.post('/pets', { ...nuevaMascota.value })
-    mensaje.value = 'Mascota agregada correctamente'
+    toast.success('Mascota agregada correctamente') // Mensaje verde moderno
     nuevaMascota.value = { name: '', species: '', breed: '', age: '', client_id: Number(props.clienteId) || '' }
     cargarMascotasCliente()
-    setTimeout(() => mensaje.value = '', 2000)
     // emit('mascota-agregada')
   } catch (error) {
-    alert('Error al agregar mascota: ' + (error.response?.data?.msg || error.message))
+    toast.error('Error al agregar mascota: ' + (error.response?.data?.msg || error.message))
   }
 }
 </script>

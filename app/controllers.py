@@ -11,15 +11,16 @@ def create_pet(name, species, breed, age, client_id):
     return pet
 
 # --------- Citas ---------
-def create_appointment(client_id, pet_id, service_id, vet_id, date, time):
-    # Crear cita
+def create_appointment(client_id, pet_id, service_id, vet_id, date, time, pickup_code=None, drop_off=False):
     appointment = Appointment(
         client_id=client_id,
         pet_id=pet_id,
         service_id=service_id,
         vet_id=vet_id,
         date=date,
-        time=time
+        time=time,
+        pickup_code=pickup_code,
+        drop_off=drop_off  # <-- Agrega esto
     )
     db.session.add(appointment)
     db.session.commit()

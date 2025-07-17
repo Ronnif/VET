@@ -33,9 +33,17 @@
             <td>{{ cita.time }}</td>
             <td>{{ cita.status || 'Pendiente' }}</td>
             <td>
-              <button @click="abrirObservacion(cita)">Agregar Observación</button>
+              <button
+                @click="abrirObservacion(cita)"
+                :disabled="cita.status?.toLowerCase() !== 'atendida'"
+              >
+                Agregar Observación
+              </button>
               <button @click="verObservaciones(cita)">Ver Observaciones</button>
-              <button v-if="cita.status?.toLowerCase() !== 'atendida'" @click="marcarAtendida(cita)">
+              <button
+                v-if="cita.status?.toLowerCase() !== 'atendida'"
+                @click="marcarAtendida(cita)"
+              >
                 Marcar como Atendida
               </button>
             </td>
@@ -74,7 +82,9 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import api from '../axios'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const citas = ref([])
 const mostrarModal = ref(false)
 const citaSeleccionada = ref(null)
@@ -124,18 +134,23 @@ function cerrarModal() {
 }
 
 async function guardarObservacion() {
-  if (!observacion.value) return
+  if (!observacion.value) {
+    toast.error('La observación no puede estar vacía')
+    return
+  }
   await api.post('/clinical-history', {
     pet_id: citaSeleccionada.value.pet_id,
     observation: observacion.value,
     appointment_id: citaSeleccionada.value.id
   })
+  toast.success('Observación guardada correctamente')
   cerrarModal()
 }
 
 async function marcarAtendida(cita) {
   await api.put(`/appointments/${cita.id}`, { status: 'atendida' })
   cita.status = 'atendida'
+  toast.success('Cita marcada como atendida')
 }
 
 async function verObservaciones(cita) {

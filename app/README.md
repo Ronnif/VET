@@ -60,11 +60,25 @@ app/
 
 ## Ejecución
 
-Inicia el backend con:
-```sh
-python main.py
-```
-El backend estará disponible en [http://localhost:5000](http://localhost:5000).
+**Importante:**  
+Para evitar errores de importación, activa el entorno virtual dentro de la carpeta `app`, pero ejecuta el backend desde la raíz del proyecto (`vet`):
+
+1. Activa el entorno virtual:
+   ```sh
+   cd app
+   .\.venv\Scripts\activate   # En Windows
+   ```
+
+2. Regresa a la raíz del proyecto:
+   ```sh
+   cd ..
+   ```
+
+3. Inicia el backend con:
+   ```sh
+   python -m app.main
+   ```
+   El backend estará disponible en [http://localhost:5000](http://localhost:5000).
 
 ## Crear un usuario admin manualmente
 
@@ -73,7 +87,7 @@ Para crear un usuario administrador desde la terminal:
 1. Asegúrate de que la base de datos esté creada y migrada.
 2. Ejecuta el script:
    ```sh
-   python scripts/create_admin.py
+   python app/scripts/create_admin.py
    ```
    El script te pedirá el nombre de usuario, email y contraseña para el admin.
 

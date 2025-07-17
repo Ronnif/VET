@@ -56,7 +56,13 @@
 
 <script>
 import axios from 'axios'
+import { useToast } from 'vue-toastification' // <-- Importa el toast
+
 export default {
+  setup() {
+    const toast = useToast() // <-- Inicializa el toast
+    return { toast }
+  },
   data() {
     return {
       services: [],
@@ -107,9 +113,9 @@ export default {
         })
         this.newService = { name: '', description: '', price: null, attention_type: '' }
         this.fetchServices()
+        this.toast.success('Servicio agregado correctamente') // Verde
       } catch (error) {
-        alert('Error al agregar servicio: ' + (error.response?.data?.message || JSON.stringify(error.response?.data) || error.message))
-        console.error(error)
+        this.toast.error('Error al agregar servicio: ' + (error.response?.data?.message || error.message)) // Rojo
       }
     },
     startEdit(service) {
@@ -129,9 +135,9 @@ export default {
         this.editId = null
         this.editService = { name: '', description: '', price: null, attention_type: '' }
         this.fetchServices()
+        this.toast.success('Servicio editado correctamente') // Verde
       } catch (error) {
-        alert('Error al editar servicio: ' + (error.response?.data?.message || JSON.stringify(error.response?.data) || error.message))
-        console.error(error)
+        this.toast.error('Error al editar servicio: ' + (error.response?.data?.message || error.message)) // Rojo
       }
     },
     async deleteService(id) {
@@ -142,14 +148,14 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         })
         this.fetchServices()
+        this.toast.error('Servicio eliminado correctamente') // Rojo/naranja
       } catch (error) {
         const msg = error.response?.data?.message || ''
         if (msg.includes('asociado a citas')) {
-          alert('No se puede eliminar el servicio porque está asociado a citas existentes. Solo puedes editarlo.')
+          this.toast.info('No se puede eliminar el servicio porque está asociado a citas existentes. Solo puedes editarlo.') // Azul
         } else {
-          alert('Error al eliminar servicio: ' + (msg || JSON.stringify(error.response?.data) || error.message))
+          this.toast.error('Error al eliminar servicio: ' + (msg || error.message)) // Rojo
         }
-        console.error(error)
       }
     }
   }

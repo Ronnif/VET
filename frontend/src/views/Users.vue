@@ -65,6 +65,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import api from '../axios'
+import { useToast } from 'vue-toastification' // <-- Importa el toast
+
+const toast = useToast() // <-- Inicializa el toast
 
 const mostrarFormulario = ref(false)
 const usuarios = ref([])
@@ -89,24 +92,24 @@ async function agregarUsuario() {
       role: nuevoUsuario.value.rol,
       password: nuevoUsuario.value.password
     })
-    // Recarga la lista completa
     const res = await api.get('/users')
     usuarios.value = res.data
     nuevoUsuario.value = { nombre: '', email: '', rol: '', password: '' }
     mostrarFormulario.value = false
+    toast.success('Usuario agregado correctamente') // Verde, éxito
   } catch (error) {
-    alert('Error al crear usuario: ' + (error.response?.data?.msg || error.message))
+    toast.error('Error al crear usuario: ' + (error.response?.data?.msg || error.message))
   }
 }
 
 async function eliminarUsuario(id) {
   try {
     await api.delete(`/users/${id}`)
-    // Recarga la lista completa
     const res = await api.get('/users')
     usuarios.value = res.data
+    toast.error('Usuario eliminado correctamente') // Rojo/naranja, acción destructiva
   } catch (error) {
-    alert('Error al eliminar usuario: ' + (error.response?.data?.msg || error.message))
+    toast.error('Error al eliminar usuario: ' + (error.response?.data?.msg || error.message))
   }
 }
 </script>
@@ -263,5 +266,30 @@ tr:nth-child(odd) td {
 .not-allowed {
   color: #888;
   font-size: 0.95rem;
+}
+.vue-toastification__toast--success {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+  color: #222;
+  font-weight: 600;
+  border-radius: 24px; /* Más pill */
+  box-shadow: 0 8px 24px rgba(67, 233, 123, 0.18);
+  font-size: 1.08rem;
+  padding: 1.2rem 2.2rem;
+}
+
+/* Personaliza el toast de error */
+.vue-toastification__toast--error {
+  background: linear-gradient(90deg, #ff5858 0%, #f09819 100%);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+/* Personaliza el toast de info */
+.vue-toastification__toast--info {
+  background: linear-gradient(90deg, #56ccf2 0%, #2f80ed 100%);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 10px;
 }
 </style>

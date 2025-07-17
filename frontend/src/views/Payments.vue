@@ -78,7 +78,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import api from '../axios'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast() 
 const showForm = ref(false)
 const pagos = ref([])
 const citasPendientes = ref([])
@@ -153,8 +155,9 @@ async function registrarPagoDirecto(cita) {
     await fetchCitasPendientes()
     metodoPago.value[cita.id] = ''
     showForm.value = false
+    toast.success('Pago registrado correctamente') // Mensaje verde de éxito
   } catch (error) {
-    alert('Error al registrar pago: ' + (error.response?.data?.msg || error.message))
+    toast.error('Error al registrar pago: ' + (error.response?.data?.msg || error.message)) // Mensaje rojo de error
   }
 }
 
