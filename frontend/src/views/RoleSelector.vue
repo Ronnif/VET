@@ -46,7 +46,6 @@ const router = useRouter()
 const selectedRole = ref('')
 const veterinarios = ref([])
 const selectedVetId = ref('')
-
 // Si el usuario es admin y selecciona veterinario, carga la lista de veterinarios
 async function onRoleClick(rol) {
   selectedRole.value = rol

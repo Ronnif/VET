@@ -168,9 +168,9 @@ class Client(db.Model):
     email = db.Column(db.String(120), unique=True)
     phone = db.Column(db.String(20))
     address = db.Column(db.String(200))
-    dni = db.Column(db.String(30))  # Opcional
+    dni = db.Column(db.String(30))
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    notes = db.Column(db.Text)      # Opcional
+    notes = db.Column(db.Text)     
 
     def to_dict(self):
         return {

@@ -113,7 +113,7 @@ export default {
         })
         this.newService = { name: '', description: '', price: null, attention_type: '' }
         this.fetchServices()
-        this.toast.success('Servicio agregado correctamente') // Verde
+        this.toast.success('Servicio agregado correctamente')
       } catch (error) {
         this.toast.error('Error al agregar servicio: ' + (error.response?.data?.message || error.message)) // Rojo
       }
@@ -135,7 +135,7 @@ export default {
         this.editId = null
         this.editService = { name: '', description: '', price: null, attention_type: '' }
         this.fetchServices()
-        this.toast.success('Servicio editado correctamente') // Verde
+        this.toast.success('Servicio editado correctamente')
       } catch (error) {
         this.toast.error('Error al editar servicio: ' + (error.response?.data?.message || error.message)) // Rojo
       }
@@ -148,13 +148,13 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         })
         this.fetchServices()
-        this.toast.error('Servicio eliminado correctamente') // Rojo/naranja
+        this.toast.error('Servicio eliminado correctamente')
       } catch (error) {
         const msg = error.response?.data?.message || ''
         if (msg.includes('asociado a citas')) {
           this.toast.info('No se puede eliminar el servicio porque está asociado a citas existentes. Solo puedes editarlo.') // Azul
         } else {
-          this.toast.error('Error al eliminar servicio: ' + (msg || error.message)) // Rojo
+          this.toast.error('Error al eliminar servicio: ' + (msg || error.message))
         }
       }
     }
@@ -181,9 +181,9 @@ h2 {
 
 .table-card {
   background: #f7fafd;
-  border-radius: 0 0 12px 12px; /* Solo abajo */
+  border-radius: 0 0 12px 12px;
   box-shadow: 0 2px 8px 0 rgba(0,0,0,0.03);
-  padding: 0 0.2rem 1.5rem 0.2rem; /* Quita padding-top */
+  padding: 0 0.2rem 1.5rem 0.2rem;
   margin-bottom: 2rem;
   width: 100%;
   max-height: 420px;
@@ -194,7 +194,7 @@ h2 {
 
 .services-table {
   width: 100%;
-  border-collapse: collapse; /* Importante para sticky header */
+  border-collapse: collapse;
   background: transparent;
   table-layout: fixed;
 }
@@ -212,7 +212,6 @@ h2 {
   vertical-align: middle;
 }
 
-/* SOLO el header tiene el borde inferior oscuro y más grueso */
 .services-table th {
   background: #e3f2fd !important;
   color: #1976d2;
@@ -226,7 +225,6 @@ h2 {
   box-shadow: none;
 }
 
-/* Quita el borde superior de la primera fila de datos */
 .services-table tbody tr:first-child td {
   border-top: none !important;
   border-bottom: none !important;

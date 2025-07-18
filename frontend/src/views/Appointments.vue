@@ -222,7 +222,7 @@ async function verificarCodigo(cita) {
     try {
       await api.put(`/appointments/${cita.id}`, { collected: true })
       cita.collected = true
-      toast.success('Código correcto. Mascota marcada como recogida.') // Mensaje verde moderno
+      toast.success('Código correcto. Mascota marcada como recogida.')
       codigoIngresado.value[cita.id] = ''
     } catch (error) {
       toast.error('Error al actualizar el estado de recogida.')

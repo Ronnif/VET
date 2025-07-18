@@ -160,8 +160,6 @@ watch(
     isCollapsed.value = route.path !== '/dashboard'
   }
 )
-
-// Tarjetas disponibles (puedes agregar/quitar según tu app)
 const cards = [
   { label: 'Gestión de Usuarios', icon: 'bi-person-badge', bg: 'bg-primary', route: 'users', roles: ['admin'] },
   { label: 'Gestión de Servicios', icon: 'bi-tools', bg: 'bg-warning', route: 'services', roles: ['admin'] },
@@ -172,8 +170,6 @@ const cards = [
   { label: 'Gestión de Citas', icon: 'bi-calendar-event', bg: 'bg-dark', route: 'appointments', roles: ['recepcionista'] },
   { label: 'Mis Citas', icon: 'bi-calendar-check', bg: 'bg-primary', route: 'my-quotes', roles: ['veterinario'] }
 ]
-
-// Solo muestra las tarjetas permitidas para el rol
 const filteredCards = computed(() =>
   cards.filter(card => card.roles.includes(role.value))
 )
@@ -236,7 +232,7 @@ const roleLabel = computed(() => {
   width: 100%;
   margin: 0 0 18px 0;
   border-radius: 0;
-  padding: 12px 0; /* Igual que los otros botones */
+  padding: 12px 0;
   background: none;
   border: none;
   text-align: left;
@@ -279,7 +275,7 @@ const roleLabel = computed(() => {
   background: none;
   border: none;
   text-align: left;
-  padding: 12px 0; /* Sin padding lateral */
+  padding: 12px 0;
   font-size: 1.08rem;
   color: #222b45;
   display: flex;
@@ -296,7 +292,7 @@ const roleLabel = computed(() => {
 .sidebar button:focus {
   background: #e7edfb;
   color: #2563eb;
-  transform: none; /* Quita el translateX y scale */
+  transform: none;
   outline: none;
   z-index: 1;
 }
@@ -319,8 +315,6 @@ const roleLabel = computed(() => {
 .sidebar.collapsed span:not(.sidebar-icon) {
   display: none !important;
 }
-
-/* HEADER */
 .dashboard-header {
   height: 68px;
   background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);
@@ -371,12 +365,9 @@ const roleLabel = computed(() => {
   box-shadow: 0 4px 24px 0 rgba(44, 62, 80, 0.25);
   transform: scale(1.07);
 }
-
-/* Ajuste para el contenido principal */
 .main-section {
   flex: 1;
   min-width: 0;
-  /* Elimina display: flex y flex-direction aquí */
 }
 .dashboard-content {
   flex: 1;
@@ -384,7 +375,6 @@ const roleLabel = computed(() => {
   background: #f6f8fc;
   padding: 22px 0 0 28px;
   transition: padding-left 0.3s cubic-bezier(.4,2,.6,1);
-  /* Elimina display: flex y flex-direction aquí */
 }
 .collapsed-content {
   padding-left: 64px !important;

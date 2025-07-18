@@ -9,6 +9,8 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 // Importa Toastification
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
+import Multiselect from 'vue-multiselect'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
 
 const app = createApp(App)
 
@@ -21,5 +23,6 @@ app.use(Toast, {
   draggable: true,
   showCloseButtonOnToast: true,
 })
+app.component('Multiselect', Multiselect)
 
 app.mount('#app')

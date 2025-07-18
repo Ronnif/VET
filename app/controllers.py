@@ -20,7 +20,7 @@ def create_appointment(client_id, pet_id, service_id, vet_id, date, time, pickup
         date=date,
         time=time,
         pickup_code=pickup_code,
-        drop_off=drop_off  # <-- Agrega esto
+        drop_off=drop_off
     )
     db.session.add(appointment)
     db.session.commit()
@@ -48,7 +48,7 @@ def add_clinical_observation(pet_id, observation, appointment_id=None, vet_id=No
         pet_id=pet_id,
         observation=observation,
         appointment_id=appointment_id,
-        vet_id=vet_id  # <-- Aquí
+        vet_id=vet_id 
     )
     db.session.add(clinical_history)
     db.session.commit()

@@ -29,7 +29,7 @@ const routes = [
       { path: 'clients', component: Clients, meta: { requiresAuth: true } },
       { path: 'clients/:id/pets', component: Pet, meta: { requiresAuth: true }, props: route => ({ clienteId: route.params.id }) },
       { path: 'my-quotes', component: MyQuotes, meta: { requiresAuth: true } },
-      { path: 'reports', component: Reports, meta: { requiresAuth: true } } // <-- Agrega esta línea
+      { path: 'reports', component: Reports, meta: { requiresAuth: true } }
     ]
   }
 ]

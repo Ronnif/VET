@@ -26,7 +26,7 @@
             <tr v-for="cita in citasPendientes" :key="cita.id">
               <td>{{ nombreMascota(cita.pet_id) }}</td>
               <td>{{ nombreCliente(cita.client_id) }}</td>
-              <td>{{ cita.date }}</td>
+              <td>{{ formatearSoloFecha(cita.date) }}</td>
               <td>{{ nombreServicio(cita.service_id) }}</td>
               <td>{{ obtenerPrecioServicio(cita.service_id) }}</td>
               <td>
@@ -155,7 +155,7 @@ async function registrarPagoDirecto(cita) {
     await fetchCitasPendientes()
     metodoPago.value[cita.id] = ''
     showForm.value = false
-    toast.success('Pago registrado correctamente') // Mensaje verde de éxito
+    toast.success('Pago registrado correctamente')
   } catch (error) {
     toast.error('Error al registrar pago: ' + (error.response?.data?.msg || error.message)) // Mensaje rojo de error
   }
@@ -171,7 +171,6 @@ function formatearSoloFecha(fechaIso) {
 }
 </script>
 <style scoped>
-/* Elimina .pagos-container y usa el mismo patrón que Citas */
 h1, h2, h3 {
   color: #1976d2;
   font-weight: 800;
@@ -207,9 +206,10 @@ button:hover:not(:disabled) {
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08);
-  padding: 2rem 2.5rem 2.5rem 2.5rem;
-  max-height: 340px;
+  height: 400px;      
   overflow-y: auto;
+  overflow-x: auto;
+  position: relative;
 }
 
 table {
@@ -220,14 +220,13 @@ table {
   font-size: 1.07rem;
   margin-bottom: 2rem;
   box-shadow: 0 1px 8px 0 rgba(33,150,243,0.04);
-  border-radius: 10px 10px 0 0;
-  overflow: hidden;
 }
 
 th, td {
   padding: 0.8rem 0.5rem;
   text-align: center;
   word-break: break-word;
+  box-sizing: border-box;
 }
 
 th {
@@ -235,6 +234,9 @@ th {
   color: #fff;
   font-weight: 700;
   border-bottom: 2px solid #b0bec5;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 tbody tr:nth-child(even) {

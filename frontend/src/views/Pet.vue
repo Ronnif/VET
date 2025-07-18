@@ -68,7 +68,6 @@ const nuevaMascota = ref({
   client_id: Number(props.clienteId) || ''
 })
 const mensaje = ref('')
-
 // Función para cargar solo las mascotas del cliente seleccionado
 async function cargarMascotasCliente() {
   if (!props.clienteId) {
@@ -78,13 +77,11 @@ async function cargarMascotasCliente() {
   const res = await api.get(`/pets?client_id=${props.clienteId}`)
   pets.value = res.data
 }
-
 // Actualiza client_id si cambia el prop y recarga mascotas
 watch(() => props.clienteId, (nuevo) => {
   nuevaMascota.value.client_id = Number(nuevo) || ''
   cargarMascotasCliente()
 })
-
 // Carga mascotas al montar el componente
 onMounted(() => {
   cargarMascotasCliente()
@@ -97,7 +94,7 @@ async function agregarMascota() {
   }
   try {
     const res = await api.post('/pets', { ...nuevaMascota.value })
-    toast.success('Mascota agregada correctamente') // Mensaje verde moderno
+    toast.success('Mascota agregada correctamente')
     nuevaMascota.value = { name: '', species: '', breed: '', age: '', client_id: Number(props.clienteId) || '' }
     cargarMascotasCliente()
     // emit('mascota-agregada')
@@ -209,8 +206,6 @@ tbody tr:nth-child(odd) {
   padding: 2rem 2.5rem 2.5rem 2.5rem;
   width: 95vw;
 }
-
-/* Elimina fondo, sombra y borde de cliente-card */
 .cliente-card {
   width: 100%;
   margin: 0 auto 2rem auto;

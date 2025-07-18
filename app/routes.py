@@ -360,9 +360,15 @@ def api_update_clinical_history(history_id):
 @jwt_required()
 def api_get_clinical_history():
     appointment_id = request.args.get('appointment_id')
+    pet_id = request.args.get('pet_id')
+    vet_id = request.args.get('vet_id')
     query = ClinicalHistory.query
     if appointment_id:
         query = query.filter_by(appointment_id=appointment_id)
+    if pet_id:
+        query = query.filter_by(pet_id=pet_id)
+    if vet_id:
+        query = query.filter_by(vet_id=vet_id)
     history = query.all()
     return jsonify([h.to_dict() for h in history])
 

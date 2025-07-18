@@ -204,10 +204,9 @@ h1 {
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 0; /* quita el margin extra */
+  margin-top: 0;
   background: #fff;
   font-size: 1.07rem;
-  /* Elimina border-radius y overflow aquí */
 }
 
 th, td {
@@ -224,7 +223,6 @@ th {
   position: sticky;
   top: 0;
   z-index: 2;
-  /* Asegura que el fondo cubra toda la celda */
   background-clip: padding-box;
 }
 
@@ -256,22 +254,20 @@ button:disabled {
 button:hover:not(:disabled) {
   background: #368a6e;
 }
-
-/* Fondo semitransparente para el modal */
 .modal-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(33, 150, 243, 0.10);
   z-index: 999;
 }
-
-/* Modal mejorado */
 .modal {
   position: fixed;
   top: 50%;
   left: 50%;
   min-width: 340px;
-  max-width: 95vw;
+  max-width: 500px;  
+  max-height: 80vh;  
+  overflow-y: auto;        
   transform: translate(-50%, -50%);
   background: #fff;
   padding: 2.2rem 2rem 1.5rem 2rem;

@@ -175,17 +175,17 @@ form input {
   border-radius: 10px 10px 0 0;
   box-shadow: 0 1px 8px 0 rgba(33,150,243,0.04);
   background: #fff;
-  width: 100%;         /* <-- Asegura que ocupe todo el ancho del padre */
-  padding: 0;          /* <-- Elimina padding extra */
+  width: 100%;
+  padding: 0;      
 }
 
 table {
-  width: 100%;         /* <-- Ocupa todo el ancho del contenedor */
-  min-width: 800px;    /* <-- Evita que se comprima demasiado */
+  width: 100%;
+  min-width: 800px;
   border-collapse: collapse;
   background: #fff;
   font-size: 1.07rem;
-  margin: 0;           /* <-- Elimina margen extra */
+  margin: 0;
 }
 
 th {

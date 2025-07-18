@@ -46,10 +46,6 @@ def create_app(config_name='default'):
 
     # Importa los modelos antes de crear las tablas
     from . import models  # Asegúrate de que los modelos estén importados
-    # Crea tablas automáticamente solo en desarrollo o testing
-    if app.config.get("DEBUG") or app.config.get("TESTING"):
-        with app.app_context():
-            db.create_all()
 
     @app.route('/', methods=['GET'])
     def index():

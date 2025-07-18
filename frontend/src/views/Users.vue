@@ -96,7 +96,7 @@ async function agregarUsuario() {
     usuarios.value = res.data
     nuevoUsuario.value = { nombre: '', email: '', rol: '', password: '' }
     mostrarFormulario.value = false
-    toast.success('Usuario agregado correctamente') // Verde, éxito
+    toast.success('Usuario agregado correctamente')
   } catch (error) {
     toast.error('Error al crear usuario: ' + (error.response?.data?.msg || error.message))
   }
@@ -107,7 +107,7 @@ async function eliminarUsuario(id) {
     await api.delete(`/users/${id}`)
     const res = await api.get('/users')
     usuarios.value = res.data
-    toast.error('Usuario eliminado correctamente') // Rojo/naranja, acción destructiva
+    toast.error('Usuario eliminado correctamente')
   } catch (error) {
     toast.error('Error al eliminar usuario: ' + (error.response?.data?.msg || error.message))
   }
@@ -116,12 +116,12 @@ async function eliminarUsuario(id) {
 
 <style scoped>
 .users-container {
-  max-width: 1200px;      /* Antes: 900px */
+  max-width: 1200px;
   margin: 2.5rem auto;
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 4px 24px 0 rgba(0,0,0,0.07);
-  padding: 3rem 3rem 3rem 3rem; /* Más espacio interno */
+  padding: 3rem 3rem 3rem 3rem;
 }
 .users-header {
   display: flex;
@@ -200,7 +200,7 @@ h1 {
   background: #f7fafd;
   border-radius: 12px;
   box-shadow: 0 2px 8px 0 rgba(0,0,0,0.03);
-  padding: 2rem 1.5rem;   /* Más padding */
+  padding: 2rem 1.5rem;
   margin-top: 2rem;
 }
 table {
@@ -210,7 +210,7 @@ table {
   background: transparent;
 }
 th, td {
-  padding: 1.1rem 0.8rem; /* Más espacio en celdas */
+  padding: 1.1rem 0.8rem;
   text-align: center;
 }
 th {
@@ -271,13 +271,12 @@ tr:nth-child(odd) td {
   background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
   color: #222;
   font-weight: 600;
-  border-radius: 24px; /* Más pill */
+  border-radius: 24px;
   box-shadow: 0 8px 24px rgba(67, 233, 123, 0.18);
   font-size: 1.08rem;
   padding: 1.2rem 2.2rem;
 }
 
-/* Personaliza el toast de error */
 .vue-toastification__toast--error {
   background: linear-gradient(90deg, #ff5858 0%, #f09819 100%);
   color: #fff;
@@ -285,7 +284,6 @@ tr:nth-child(odd) td {
   border-radius: 10px;
 }
 
-/* Personaliza el toast de info */
 .vue-toastification__toast--info {
   background: linear-gradient(90deg, #56ccf2 0%, #2f80ed 100%);
   color: #fff;

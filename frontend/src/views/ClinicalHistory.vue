@@ -4,19 +4,31 @@
     <div style="margin-bottom: 1.2rem;">
       <button
         v-if="role === 'veterinario'"
-        @click="abrirModalAgregar('')"
+        @click="iniciarAgregar"
+        :disabled="editando"
       >
         Agregar nueva observación
       </button>
     </div>
 
-    <div>
-      <label>Filtrar por mascota:</label>
-      <select v-model="filtroPetId" @change="fetchHistorial">
-        <option value="">Todas</option>
-        <option v-for="pet in pets" :key="pet.id" :value="pet.id">{{ pet.name }}</option>
+    <!-- FORMULARIO DE AGREGAR/EDITAR -->
+    <div v-if="editando" class="form-edicion">
+      <h3>{{ modalObs.id ? 'Editar observación' : 'Agregar nueva observación' }}</h3>
+      <label>Mascota:</label>
+      <select v-model="modalObs.pet">
+        <option v-for="pet in pets" :key="pet.id" :value="pet">{{ pet.name }}</option>
       </select>
+      <label>Observación:</label>
+      <textarea v-model="modalObs.observation" placeholder="Observación" required></textarea>
+      <div style="display: flex; gap: 1rem;">
+        <button @click="guardarObsCard" :disabled="!modalObs.pet || !modalObs.observation">
+          Guardar
+        </button>
+        <button @click="cancelarEdicion">Cancelar</button>
+      </div>
     </div>
+
+    <!-- RESTO DE TU LISTA -->
     <div class="historial-list">
       <div
         class="historial-card"
@@ -30,14 +42,8 @@
         <div class="historial-header">
           <span class="historial-mascota">{{ nombreMascota(h.pet_id) }}</span>
           <span class="historial-fecha">{{ formatearFecha(h.date) }}</span>
-          <span
-            v-if="h.appointment_id"
-            class="badge-principal"
-          >Principal</span>
-          <span
-            v-else
-            class="badge-seguimiento"
-          >Seguimiento</span>
+          <span v-if="h.appointment_id" class="badge-principal">Principal</span>
+          <span v-else class="badge-seguimiento">Seguimiento</span>
         </div>
         <div class="historial-extra">
           <span v-if="h.owner_name">Dueño: {{ h.owner_name }}</span>
@@ -52,39 +58,11 @@
         <div class="historial-actions">
           <button @click="descargarObservacion(h)">Descargar PDF</button>
           <button
-            v-if="h.veterinarian_name === currentVetName"
-            @click="editarObservacion(h)"
+            v-if="h.vet_id === currentVetId"
+            @click="iniciarEdicion(h)"
+            :disabled="editando"
           >Editar</button>
         </div>
-      </div>
-    </div>
-
-    <!-- Modal para agregar observación -->
-    <div v-if="showModalObs" class="modal-backdrop">
-      <div class="modal">
-        <h3>Agregar nueva observación</h3>
-        <label>Mascota:</label>
-        <template v-if="modalObs.id">
-          <!-- Modo edición: solo muestra el nombre, no permite cambiar -->
-          <input type="text" :value="nombreMascota(modalObs.pet_id)" disabled />
-        </template>
-        <template v-else>
-          <!-- Modo agregar: permite seleccionar mascota -->
-          <multiselect
-            v-model="modalObs.pet_id"
-            :options="mascotasAtendidas"
-            :custom-label="pet => pet.name"
-            placeholder="Seleccione una mascota"
-            label="name"
-            track-by="id"
-          />
-        </template>
-        <span v-if="mascotasAtendidas.length === 0" style="color: #c00; font-size: 0.95rem;">
-          No hay mascotas atendidas por usted.
-        </span>
-        <textarea v-model="modalObs.observation" placeholder="Observación" required></textarea>
-        <button @click="guardarObsCard" :disabled="!modalObs.pet_id || !modalObs.observation">Guardar</button>
-        <button @click="cerrarModalObs">Cancelar</button>
       </div>
     </div>
     <div style="height: 4rem;"></div>
@@ -92,38 +70,45 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import api from '../axios'
-import jsPDF from 'jspdf'
-import Multiselect from 'vue-multiselect'
-import 'vue-multiselect/dist/vue-multiselect.min.css'
 import { useToast } from 'vue-toastification'
+import jsPDF from 'jspdf'
 
 const toast = useToast()
 const historial = ref([])
 const pets = ref([])
 const filtroPetId = ref('')
 const role = ref('')
-const modalObs = ref({ pet_id: '', observation: '' })
+const modalObs = reactive({ pet: null, observation: '', id: null })
 const currentVetName = ref('')
-const currentVetId = ref('')
-const showModalObs = ref(false)
+const currentVetId = ref(Number(localStorage.getItem('user_id')) || null)
+const editando = ref(false)
 
 onMounted(async () => {
   role.value = localStorage.getItem('role') || ''
+  if (role.value !== 'veterinario' && role.value !== 'recepcionista') {
+    window.location.href = '/'
+    return
+  }
   currentVetName.value = localStorage.getItem('user_name') || ''
-  currentVetId.value = localStorage.getItem('user_id') || ''
   await fetchMascotas()
   await fetchHistorial()
 })
 
 async function fetchMascotas() {
-  const res = await api.get('/pets')
-  pets.value = res.data
+  let res = await api.get('/pets')
+  if (role.value === 'veterinario') {
+    const resHist = await api.get(`/clinical-history?vet_id=${currentVetId.value}`)
+    const atendidasIds = [...new Set(resHist.data.map(h => h.pet_id))]
+    pets.value = res.data.filter(p => atendidasIds.includes(p.id))
+  } else {
+    pets.value = res.data
+  }
 }
 
 async function fetchHistorial() {
-  let url = '/reports/clinical-history'
+  let url = '/clinical-history'
   const params = []
   if (filtroPetId.value) params.push(`pet_id=${filtroPetId.value}`)
   if (role.value === 'veterinario') {
@@ -140,85 +125,83 @@ function nombreMascota(id) {
   return pet ? pet.name : 'Mascota'
 }
 
-function descargarObservacion(h) {
-  const doc = new jsPDF()
-  doc.setFontSize(16)
-  doc.text('Historial Clínico', 14, 18)
-  doc.setFontSize(12)
-  doc.text(`Mascota: ${nombreMascota(h.pet_id)}`, 14, 30)
-  if (h.owner_name) doc.text(`Dueño: ${h.owner_name}`, 14, 38)
-  if (h.service_name) doc.text(`Servicio: ${h.service_name}`, 14, 46)
-  doc.text(`Veterinario: ${h.veterinarian_name || 'Desconocido'}`, 14, 54)
-  doc.text(`Fecha: ${formatearFecha(h.date)}`, 14, 62)
-  doc.text('Observación:', 14, 74)
-  doc.setFontSize(11)
-  doc.text(h.observation || '', 14, 82, { maxWidth: 180 })
-  doc.save(`historial_${nombreMascota(h.pet_id)}_${h.date}.pdf`)
+function iniciarAgregar() {
+  modalObs.pet = pets.value.length > 0 ? pets.value[0] : null
+  modalObs.observation = ''
+  modalObs.id = null
+  editando.value = true
 }
 
-function formatearFecha(fechaIso) {
-  if (!fechaIso) return ''
-  const fecha = new Date(fechaIso)
-  const dia = String(fecha.getDate()).padStart(2, '0')
-  const mes = String(fecha.getMonth() + 1).padStart(2, '0')
-  const anio = fecha.getFullYear()
-  const horas = String(fecha.getHours()).padStart(2, '0')
-  const minutos = String(fecha.getMinutes()).padStart(2, '0')
-  return `${dia}/${mes}/${anio} ${horas}:${minutos}`
+function cancelarEdicion() {
+  modalObs.pet = null
+  modalObs.observation = ''
+  modalObs.id = null
+  editando.value = false
 }
 
-function abrirModalAgregar(pet_id = '') {
-  modalObs.value = { pet_id, observation: '' }
-  showModalObs.value = true
-}
-function cerrarModalObs() {
-  modalObs.value = { pet_id: '', observation: '' }
-  showModalObs.value = false
-}
-function editarObservacion(h) {
-  modalObs.value = {
-    pet_id: h.pet_id,
-    observation: h.observation,
-    id: h.id // Guarda el id para saber que es edición
-  }
-  showModalObs.value = true
+function iniciarEdicion(h) {
+  modalObs.pet = pets.value.find(p => p.id === h.pet_id) || null
+  modalObs.observation = h.observation
+  modalObs.id = h.id
+  editando.value = true
 }
 
-// Modifica guardarObsCard para actualizar si existe id:
 async function guardarObsCard() {
   try {
-    if (modalObs.value.id) {
-      // Editar observación existente
-      await api.put(`/clinical-history/${modalObs.value.id}`, {
-        observation: modalObs.value.observation
+    if (modalObs.id) {
+      await api.put(`/clinical-history/${modalObs.id}`, {
+        observation: modalObs.observation
       })
       toast.success('Observación editada correctamente')
     } else {
-      // Nueva observación
       await api.post('/clinical-history', {
-        pet_id: typeof modalObs.value.pet_id === 'object' ? modalObs.value.pet_id.id : modalObs.value.pet_id,
-        observation: modalObs.value.observation
+        pet_id: modalObs.pet.id,
+        observation: modalObs.observation
       })
       toast.success('Observación agregada correctamente')
     }
     await fetchHistorial()
-    cerrarModalObs()
+    cancelarEdicion()
   } catch (error) {
     toast.error('Error al guardar observación: ' + (error.response?.data?.msg || error.message))
   }
 }
 
-// Filtrar mascotas atendidas por el veterinario autenticado usando el ID
-const mascotasAtendidas = computed(() =>
-  pets.value.filter(pet =>
-    historial.value.some(
-      h =>
-        h.pet_id === pet.id &&
-        String(h.vet_id) === String(currentVetId.value) &&
-        h.appointment_id
-    )
-  )
-)
+function formatearFecha(fecha) {
+  if (!fecha) return ''
+  const d = new Date(fecha)
+  return d.toLocaleDateString('es-PE', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
+function descargarObservacion(h) {
+  const doc = new jsPDF()
+  const petName = nombreMascota(h.pet_id)
+  const owner = h.owner_name || ''
+  const vet = h.veterinarian_name || ''
+  const service = h.service_name || ''
+  const date = formatearFecha(h.date)
+  const obs = h.observation || ''
+
+  doc.setFontSize(16)
+  doc.text('Historial Clínico', 10, 15)
+  doc.setFontSize(12)
+  doc.text(`Mascota: ${petName}`, 10, 30)
+  doc.text(`Dueño: ${owner}`, 10, 40)
+  doc.text(`Veterinario: ${vet}`, 10, 50)
+  if (service) doc.text(`Servicio: ${service}`, 10, 60)
+  doc.text(`Fecha: ${date}`, 10, 70)
+  doc.text('Observación:', 10, 85)
+  doc.setFontSize(11)
+  doc.text(obs, 10, 95, { maxWidth: 180 })
+
+  doc.save(`observacion_${petName}_${date}.pdf`)
+}
 </script>
 
 <style scoped>
@@ -232,13 +215,13 @@ const mascotasAtendidas = computed(() =>
   padding: 0;
 }
 .historial-list {
-  height: calc(100vh - 120px); /* Ajusta este valor según tu layout */
+  height: calc(100vh - 120px);
   overflow-y: auto;
   margin-top: 2rem;
   border-radius: 10px;
   box-shadow: 0 1px 8px 0 rgba(33,150,243,0.04);
   background: #fff;
-  padding: 1rem 1rem 10rem 1rem; /* Más padding inferior */
+  padding: 1rem 1rem 10rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -254,10 +237,6 @@ const mascotasAtendidas = computed(() =>
   .historial-list {
     padding: 1rem 0.5rem 1rem 0.5rem;
     max-height: calc(100vh - 100px);
-  }
-  form {
-    flex-direction: column;
-    gap: 0.5rem;
   }
 }
 
@@ -290,32 +269,6 @@ button:hover:not(:disabled) {
   background: #368a6e;
 }
 
-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  align-items: center;
-  background: #f7fafd;
-  border-radius: 10px;
-  padding: 1rem 1.5rem;
-}
-
-form select,
-form textarea {
-  border-radius: 6px;
-  border: 1px solid #b0bec5;
-  font-size: 1rem;
-  padding: 0.4rem 0.8rem;
-  background: #fff;
-}
-
-form textarea {
-  min-width: 220px;
-  min-height: 40px;
-  resize: vertical;
-}
-
 label {
   font-weight: 600;
   color: #1976d2;
@@ -329,6 +282,20 @@ select {
   font-size: 1rem;
   padding: 0.4rem 0.8rem;
   background: #fff;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+textarea {
+  border-radius: 6px;
+  border: 1px solid #b0bec5;
+  font-size: 1rem;
+  padding: 0.4rem 0.8rem;
+  background: #fff;
+  min-width: 220px;
+  min-height: 60px;
+  resize: vertical;
+  width: 100%;
   margin-bottom: 1rem;
 }
 
@@ -416,67 +383,35 @@ select {
   background: #368a6e;
 }
 
-/* --- Modal --- */
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+/* --- Formulario de edición --- */
+.form-edicion {
+  background: #f7fafd;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 8px 0 rgba(33,150,243,0.04);
+  max-width: 600px;
 }
-
-.modal {
-  background: #fff;
-  border-radius: 16px;
-  padding: 2rem;
-  max-width: 500px;
-  width: 90%;
-  box-shadow: 0 8px 32px 0 rgba(33,150,243,0.18);
-  position: relative;
-}
-.modal h3 {
-  margin-bottom: 1rem;
+.form-edicion label {
+  font-weight: 600;
   color: #1976d2;
-  font-weight: 800;
-  font-size: 1.2rem;
-  text-align: center;
+  font-size: 1.05rem;
+  margin-right: 0.5rem;
+  display: block;
+  margin-top: 1rem;
 }
-.modal textarea {
-  width: 100%;
-  min-height: 100px;
+.form-edicion select,
+.form-edicion textarea {
+  border-radius: 6px;
   border: 1px solid #b0bec5;
-  border-radius: 6px;
-  padding: 0.8rem;
   font-size: 1rem;
+  padding: 0.4rem 0.8rem;
+  background: #fff;
+  width: 100%;
   margin-bottom: 1rem;
-  resize: none;
 }
-
-.modal button {
-  width: 48%;
-  padding: 0.7rem;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  border-radius: 6px;
-  transition: background 0.2s;
-  box-shadow: 0 2px 8px 0 rgba(33,150,243,0.1);
-}
-
-.modal button:hover {
-  background: #368a6e;
-  color: #fff;
-}
-
-/* Multiselect scroll for many options */
-.modal .multiselect__content {
-  max-height: 140px;
-  overflow-y: auto;
+.form-edicion textarea {
+  min-height: 60px;
+  resize: vertical;
 }
 </style>

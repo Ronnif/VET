@@ -171,7 +171,7 @@ h2 {
 }
 
 .table-scroll {
-  max-height: 340px; /* o el valor que prefieras */
+  max-height: 340px;
   overflow-y: auto;
   margin-top: 1rem;
   border-radius: 10px 10px 0 0;
@@ -182,7 +182,7 @@ h2 {
 
 .reports-table {
   width: 100%;
-  table-layout: fixed; /* <-- Esto es clave para que la tabla no crezca fuera del contenedor */
+  table-layout: fixed;
   border-collapse: separate;
   border-spacing: 0;
   background: transparent;

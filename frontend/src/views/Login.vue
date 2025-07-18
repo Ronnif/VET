@@ -91,7 +91,7 @@ const login = async () => {
   z-index: 2;
 }
 .login-card {
-  background: rgba(83, 84, 85, 0.10); /* color oscuro con transparencia */
+  background: rgba(83, 84, 85, 0.10);
   border-radius: 18px;
   box-shadow: 0 8px 32px 0 rgba(60, 60, 60, 0.25);
   padding: 2.5rem 2.5rem 2rem 2.5rem;
@@ -101,7 +101,6 @@ const login = async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Glassmorphism effect */
   backdrop-filter: blur(8px);
   border: 1.5px solid rgba(255,255,255,0.18);
 }

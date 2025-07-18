@@ -5,51 +5,47 @@ Este proyecto es el backend de un sistema de gestión veterinaria, desarrollado 
 ## Estructura del Proyecto
 
 ```
-app/
-├── __init__.py           # Inicialización y configuración principal de Flask
-├── config.py             # Configuración de entornos y base de datos
-├── controllers.py        # Lógica de negocio y funciones auxiliares
-├── main.py               # Punto de entrada para ejecutar el backend
-├── models.py             # Modelos de base de datos (SQLAlchemy)
-├── routes.py             # Rutas y endpoints de la API REST
-├── utils.py              # Funciones utilitarias para respuestas estándar
-├── requirements.txt      # Dependencias de Python
-├── .gitignore            # Archivos y carpetas a ignorar en Git
-├── README.md             # Este archivo
-├── scripts/
-│   └── create_admin.py   # Script para crear un usuario admin manualmente
-├── migrations/           # Archivos de migración de base de datos (Alembic)
-└── instance/             # Configuración específica de instancia (NO subir)
+vet/
+├── app/                # Código fuente del backend Flask
+├── migrations/         # Archivos de migración de base de datos (Alembic)
+├── .venv/              # Entorno virtual Python (NO subir a Git)
+├── README.md           # Este archivo
+└── ...
 ```
 
-
-1. ## Requisitos
+## Requisitos
 
 - Python 3.12+
 - MySQL Server (instalado y corriendo)
 - pip
 
+## Instalación y configuración
 
-2. **Crea y activa un entorno virtual:**
+1. **Crea y activa un entorno virtual** (desde la raíz del proyecto):
+
    ```sh
    python -m venv .venv
-   .venv\Scripts\activate   # En Windows
-   # source .venv/bin/activate   # En Linux/Mac
+   # En Windows:
+   .venv\Scripts\activate
+   # En Linux/Mac:
+   source .venv/bin/activate
    ```
 
-3. **Instala las dependencias:**
+2. **Instala las dependencias:**
+
    ```sh
-   pip install -r requirements.txt
+   pip install -r app/requirements.txt
    ```
 
-4. **Configura la base de datos MySQL:**
+3. **Configura la base de datos MySQL:**
    - Crea una base de datos en MySQL, por ejemplo:
      ```sql
-     CREATE DATABASE veterinaria_db 
+     CREATE DATABASE veterinaria_db;
      ```
-   - Edita `config.py` si necesitas cambiar el usuario, contraseña o nombre de la base de datos.
+   - Edita `app/config.py` si necesitas cambiar el usuario, contraseña o nombre de la base de datos.
 
-5. **Realiza las migraciones de la base de datos:**
+4. **Realiza las migraciones de la base de datos:**
+
    ```sh
    flask db upgrade
    ```
@@ -60,21 +56,17 @@ app/
 
 ## Ejecución
 
-**Importante:**  
-Para evitar errores de importación, activa el entorno virtual dentro de la carpeta `app`, pero ejecuta el backend desde la raíz del proyecto (`vet`):
+> **Importante:**  
+> Activa el entorno virtual desde la raíz del proyecto (`vet`), pero ejecuta el backend desde la raíz también.
 
 1. Activa el entorno virtual:
    ```sh
-   cd app
-   .\.venv\Scripts\activate   # En Windows
+   # Desde la raíz del proyecto
+   .venv\Scripts\activate   # En Windows
+   # source .venv/bin/activate   # En Linux/Mac
    ```
 
-2. Regresa a la raíz del proyecto:
-   ```sh
-   cd ..
-   ```
-
-3. Inicia el backend con:
+2. Inicia el backend:
    ```sh
    python -m app.main
    ```
@@ -93,5 +85,11 @@ Para crear un usuario administrador desde la terminal:
 
 ## Endpoints principales
 
-Consulta el archivo [`routes.py`](routes.py) para ver todos los endpoints disponibles.
+Consulta el archivo [`app/routes.py`](app/routes.py) para ver todos los endpoints disponibles.
 
+## Notas
+
+- **No subas la carpeta `.venv` ni archivos de configuración sensibles a GitHub.**
+- Si tienes problemas de importación, asegúrate de estar en la raíz del proyecto y de que el entorno virtual esté activado.
+
+---
