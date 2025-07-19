@@ -44,7 +44,7 @@ python main.py
 ```
 
 pip install cryptography
-
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ---
 
 ### 3. Frontend (Vue)
