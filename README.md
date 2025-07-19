@@ -45,6 +45,7 @@ python main.py
 ```sh
 pip install cryptography
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+SQLALCHEMY_DATABASE_URI = environ.get('DATABASE_URL', 'mysql+pymysql://root:root@localhost/veterinaria_db')
 ---
 
 ### 3. Frontend (Vue)
