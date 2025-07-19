@@ -42,7 +42,7 @@ pip install -r requirements.txt
 # Configura tu base de datos en config.py o variables de entorno
 python main.py
 ```
-
+```sh
 pip install cryptography
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ---
