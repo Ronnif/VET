@@ -43,6 +43,8 @@ pip install -r requirements.txt
 python main.py
 ```
 
+pip install cryptography
+
 ---
 
 ### 3. Frontend (Vue)
