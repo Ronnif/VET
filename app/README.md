@@ -79,7 +79,7 @@ Para crear un usuario administrador desde la terminal:
 1. Asegúrate de que la base de datos esté creada y migrada.
 2. Ejecuta el script:
    ```sh
-   python app/scripts/create_admin.py
+   python -m app.scripts.create_admin
    ```
    El script te pedirá el nombre de usuario, email y contraseña para el admin.
 
